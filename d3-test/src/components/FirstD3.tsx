@@ -1,10 +1,17 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import * as d3 from "d3";
 
 const FirstD3 = () => {
   const ref = useRef(null);
   const [name, setName] = useState("");
   const [value, setValue] = useState(0);
+
+  const marginTop = 20;
+  const marginRight = 20;
+  const marginBottom = 20;
+  const marginLeft = 20;
+  const width = 640;
+  const height = 400;
 
   const [data, setData] = useState([
     { name: "A", value: 10 },
@@ -14,13 +21,13 @@ const FirstD3 = () => {
     { name: "E", value: 30 },
     { name: "F", value: 60 },
   ]);
-  const rectWidth = 50;
 
-  useEffect(() => {
-    const svg = d3.select(ref.current);
-    const allRects = svg.selectAll("rect").data(data);
-    allRects.attr("x", (d, i) => i).attr("height", (d) => d.value);
-  });
+  const x = d3.scaleLinear(
+    [0, data.length - 1],
+    [marginLeft, width - marginRight]
+  );
+  const y = d3.scaleLinear([0, 100], [height - marginBottom, marginTop]);
+  const line = d3.line((d, i) => x(i), y);
 
   const handleNameChange = (event: FormEvent<HTMLInputElement>) => {
     setName(event.currentTarget.value);
@@ -38,17 +45,20 @@ const FirstD3 = () => {
   return (
     <div>
       <h3>First D3.js stuff</h3>
-      <svg
-        className='svg'
-        ref={ref}
-        width={rectWidth * data.length}
-        height={75}
-      >
-        {data.map((d: { name: string; value: number }, i: number) => (
-          <rect key={i} />
-        ))}
+      <svg className='svg' ref={ref} width={width} height={height}>
+        <path
+          fill='none'
+          stroke='currentColor'
+          strokeWidth={1.5}
+          d={line(Array.from(data.values(), ({ value }) => value))!}
+        />
+        <g fill='green' strokeWidth={2.5} stroke='currentColor'>
+          {data.map((d, i) => (
+            <circle cx={x(i)} cy={y(d.value)} r={5} key={i} />
+          ))}
+        </g>
       </svg>
-
+      <br />
       <form onSubmit={(e) => handleAddItem(e)}>
         <input type='text' value={name} onChange={handleNameChange} />
         <input type='number' value={value} onChange={handleValueChange} />
