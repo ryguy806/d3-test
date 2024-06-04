@@ -1,6 +1,7 @@
 import "./App.css";
+import ScatterPlot from "./components/ScatterPlot";
 // import Enter_ExitData from "./components/Enter_ExitData";
-import ReadJSON from "./components/ReadJSON";
+// import ReadJSON from "./components/ReadJSON";
 // import JoinData from "./components/JoinData";
 // import BarChart from "./components/BarChart";
 // import FirstD3 from "./components/FirstD3";
@@ -16,7 +17,8 @@ function App() {
       {/* <BarChart /> */}
       {/* <JoinData /> */}
       {/* <Enter_ExitData /> */}
-      <ReadJSON />
+      {/* <ReadJSON /> */}
+      <ScatterPlot />
     </>
   );
 }
