@@ -1,72 +1,47 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect } from "react";
 import * as d3 from "d3";
+import data from "../assets/data/data.json";
+
+type i = number;
 
 const BarChart = () => {
-  const [data, setData] = useState([
-    {
-      name: "A",
-      value: 50,
-    },
-    {
-      name: "B",
-      value: 20,
-    },
-    {
-      name: "C",
-      value: 40,
-    },
-    {
-      name: "D",
-      value: 70,
-    },
-  ]);
-
-  setData(data);
-
-  const ref = useRef(null);
-
   const margin = { top: 20, right: 20, bottom: 30, left: 40 };
   const width = 960 - margin.left - margin.right;
   const height = 500 - margin.top - margin.bottom;
-  const x = d3.scaleBand().range([0, width]).padding(0.1);
-  const y = d3.scaleLinear().range([height, 0]);
+  const containerWidth = width - margin.left - margin.right;
+  // const containerHeight = height - margin.top - margin.bottom;
+
+  const xAccessor = (d: (typeof data)[i]) => d.currently.humidity;
+
+  const [minX = 0, maxX = 140] = d3.extent(data, xAccessor);
+
+  const svg = d3.select("svg");
+  const ctr = svg
+    .append("g")
+    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+  const xScale = d3
+    .scaleLinear()
+    .domain([minX, maxX])
+    .range([0, containerWidth])
+    .nice();
 
   useEffect(() => {
-    x.domain(
-      data.map(function (d) {
-        return d.name;
-      })
-    );
-    y.domain([0, 200]);
-
-    const svg = d3
-      .select("svg")
-      .append("g")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
-
-    svg.append("g").call(d3.axisLeft(y));
-  }, [data]);
+    ctr
+      .selectAll("rect")
+      .data(data)
+      .join("rect")
+      .attr("width", 5)
+      .attr("height", 100)
+      .attr("x", (d) => xScale(xAccessor(d)))
+      .attr("y", 0);
+  });
 
   return (
     <>
       <svg
-        ref={ref}
         width={width + margin.left + margin.right}
         height={height + margin.top + margin.bottom}
-      >
-        <g transform={"translate(" + margin.left + "," + margin.top + ")"} />
-        {data?.map((d: { name: string; value: number }, i) => (
-          <rect
-            key={i}
-            x={d.name}
-            y={d.value}
-            width={x.bandwidth()}
-            height={height - y(d.value)}
-          />
-        ))}
-        <g />
-      </svg>
+      ></svg>
     </>
   );
 };
