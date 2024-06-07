@@ -1,48 +1,43 @@
-import { useEffect } from "react";
-import * as d3 from "d3";
-import data from "../assets/data/data.json";
+import { useState } from "react";
+import dataset from "../assets/data/data.json";
+import { scaleBand, scaleLinear, extent } from "d3";
 
 type i = number;
 
 const BarChart = () => {
-  const margin = { top: 20, right: 20, bottom: 30, left: 40 };
-  const width = 960 - margin.left - margin.right;
-  const height = 500 - margin.top - margin.bottom;
-  const containerWidth = width - margin.left - margin.right;
-  // const containerHeight = height - margin.top - margin.bottom;
+  const [data, setData] = useState<typeof dataset>(dataset);
+  const height = 500;
+  const width = 960;
 
-  const xAccessor = (d: (typeof data)[i]) => d.currently.humidity;
+  const xAccessor = (d: (typeof data)[i]): number => d.currently.time;
+  const [minX = 0, maxX = 1] = extent(data, xAccessor);
 
-  const [minX = 0, maxX = 140] = d3.extent(data, xAccessor);
+  const yScale = scaleBand()
+    .domain(data.map((d) => d.currently.humidity + ""))
+    .range([0, height]);
 
-  const svg = d3.select("svg");
-  const ctr = svg
-    .append("g")
-    .attr("transform", `translate(${margin.left}, ${margin.top})`);
-  const xScale = d3
-    .scaleLinear()
-    .domain([minX, maxX])
-    .range([0, containerWidth])
-    .nice();
+  const xScale = scaleLinear().domain([minX, maxX]).range([0, width]);
 
-  useEffect(() => {
-    ctr
-      .selectAll("rect")
-      .data(data)
-      .join("rect")
-      .attr("width", 5)
-      .attr("height", 100)
-      .attr("x", (d) => xScale(xAccessor(d)))
-      .attr("y", 0);
-  });
+  if (!data) return <pre>Loading...</pre>;
 
   return (
-    <>
-      <svg
-        width={width + margin.left + margin.right}
-        height={height + margin.top + margin.bottom}
-      ></svg>
-    </>
+    <div>
+      <svg height={height} width={width}>
+        {data.map((d, i) => (
+          <rect
+            key={i}
+            x={xScale(d.currently.time)}
+            y={yScale(d.currently.humidity + "")}
+            width={20}
+            height={yScale.bandwidth()}
+            fill={`#${d.currently.time.toString().substring(3, 6)}`}
+            // style={{
+            //   color: `#${d.currently.time.toString().substring(3, 6)}`,
+            // }}
+          />
+        ))}
+      </svg>
+    </div>
   );
 };
 
