@@ -3,11 +3,14 @@ import dataset from "../assets/data/data.json";
 import { scaleBand, scaleLinear, extent } from "d3";
 
 type i = number;
+const height = 500;
+const width = 960;
+// const margins = { top: 20, left: 20, bottom: 20, right: 20 };
 
 const BarChart = () => {
   const [data, setData] = useState<typeof dataset>(dataset);
-  const height = 500;
-  const width = 960;
+
+  setData(data);
 
   const xAccessor = (d: (typeof data)[i]): number => d.currently.time;
   const [minX = 0, maxX = 1] = extent(data, xAccessor);
