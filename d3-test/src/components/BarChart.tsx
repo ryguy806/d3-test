@@ -1,42 +1,59 @@
-import { useState } from "react";
-import dataset from "../assets/data/data.json";
-import { scaleBand, scaleLinear, extent } from "d3";
+import { scaleBand, scaleLinear } from "d3";
+import dataset from "../assets/data/buildings.json";
 
-type i = number;
 const height = 500;
 const width = 960;
-// const margins = { top: 20, left: 20, bottom: 20, right: 20 };
+const margins = { top: 20, left: 20, bottom: 20, right: 20 };
+
+// function generateRandomHexCode() {
+//   const hexCode = "";
+
+//   while (hexCode.length < 7) {
+//     hexCode.concat(Math.round(Math.random() * 15).toString(16));
+//   }
+
+//   hexCode.replace(hexCode.charAt(0), "#");
+
+//   return hexCode;
+// }
 
 const BarChart = () => {
-  const [data, setData] = useState<typeof dataset>(dataset);
-
-  setData(data);
-
-  const xAccessor = (d: (typeof data)[i]): number => d.currently.time;
-  const [minX = 0, maxX = 1] = extent(data, xAccessor);
-
   const yScale = scaleBand()
-    .domain(data.map((d) => d.currently.humidity + ""))
-    .range([0, height]);
+    .domain(dataset.map((d) => d.name))
+    .range([0, width - margins.left - margins.right]);
 
-  const xScale = scaleLinear().domain([minX, maxX]).range([0, width]);
+  const xScale = scaleLinear()
+    .domain(dataset.sort((a, b) => a.height - b.height).map((d) => d.height))
+    .range([0, height - margins.top - margins.bottom]);
 
-  if (!data) return <pre>Loading...</pre>;
+  const generateRandomHexCode = () => {
+    let hexCode = "";
+
+    while (hexCode.length < 6) {
+      hexCode += Math.round(Math.random() * 15).toString(16);
+    }
+
+    hexCode.replace(hexCode.charAt(0), "#");
+
+    return hexCode;
+  };
+
+  if (!dataset) return <pre>Loading...</pre>;
 
   return (
-    <div>
-      <svg height={height} width={width}>
-        {data.map((d, i) => (
+    <div style={{ height: height, width: width, margin: margins.top }}>
+      <svg
+        height={height - margins.top - margins.bottom}
+        width={width - margins.left - margins.right}
+      >
+        {dataset.map((d, i) => (
           <rect
             key={i}
-            x={xScale(d.currently.time)}
-            y={yScale(d.currently.humidity + "")}
+            x={xScale(d.height)}
+            y={yScale(d.name)}
             width={20}
             height={yScale.bandwidth()}
-            fill={`#${d.currently.time.toString().substring(3, 6)}`}
-            // style={{
-            //   color: `#${d.currently.time.toString().substring(3, 6)}`,
-            // }}
+            fill={`#${generateRandomHexCode()}`}
           />
         ))}
       </svg>
