@@ -5,18 +5,6 @@ const height = 500;
 const width = 960;
 const margins = { top: 20, left: 20, bottom: 20, right: 20 };
 
-// function generateRandomHexCode() {
-//   const hexCode = "";
-
-//   while (hexCode.length < 7) {
-//     hexCode.concat(Math.round(Math.random() * 15).toString(16));
-//   }
-
-//   hexCode.replace(hexCode.charAt(0), "#");
-
-//   return hexCode;
-// }
-
 const BarChart = () => {
   const yScale = scaleBand()
     .domain(dataset.map((d) => d.name))

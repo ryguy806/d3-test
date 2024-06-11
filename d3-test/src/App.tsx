@@ -3,7 +3,7 @@ import "./App.css";
 // import Enter_ExitData from "./components/Enter_ExitData";
 // import ReadJSON from "./components/ReadJSON";
 // import JoinData from "./components/JoinData";
-import BarChart from "./components/BarChart";
+import BarChartVega from "./components/BarChartVega";
 // import FirstD3 from "./components/FirstD3";
 // import SVGPractice from "./components/SVGPractice";
 // import Smiley from "./components/Smiley";
@@ -14,7 +14,8 @@ function App() {
       {/* <Smiley /> */}
       {/* <SVGPractice /> */}
       {/* <FirstD3 /> */}
-      <BarChart />
+      <BarChartVega />
+      {/* <BarChart /> */}
       {/* <JoinData /> */}
       {/* <Enter_ExitData /> */}
       {/* <ReadJSON /> */}
